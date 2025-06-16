@@ -1,0 +1,70 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              lower-case-service-id: true
+              enabled: true
+          routes:
+            # Example route for user service
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - StripPrefix=2  # Removes /api/users from the path before forwarding
+                - PrefixPath=/user-service # Adds a prefix to the path for routing
+
+            # Example route for product service
+            - id: product-service
+              uri: lb://product-service
+              predicates:
+                - Path=/api/products/**
+              filters:
+                - StripPrefix=2  # Removes /api/products from the path before forwarding
+                - PrefixPath=/product-service
+
+            # Example route for order service
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/api/orders/**
+              filters:
+                - StripPrefix=2  # Removes /api/orders from the path before forwarding
+                - PrefixPath=/order-service
+
+# Eureka client configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8087/eureka-discovery/eureka/
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+
+# Logging configuration for debugging
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    health:
+      show-details: always
