@@ -19,27 +19,24 @@ spring:
             - id: user-service
               uri: lb://USER-SERVICE
               predicates:
-                - Path=/users/**
+                - Path=/api/users/**
               filters:
-                - RewritePath=/user/(?<segment>.*), /$\{segment}
                 - PrefixPath=/user-service # Adds a prefix to the path for routing
 
             # Example route for product service
             - id: product-service
               uri: lb://PRODUCT-SERVICE
               predicates:
-                - Path=/products/**
+                - Path=/api/products/**
               filters:
-                - RewritePath=/product/(?<segment>.*), /$\{segment}
                 - PrefixPath=/product-service
 
             # Example route for order service
             - id: order-service
               uri: lb://ORDER-SERVICE
               predicates:
-                - Path=/orders/**
+                - Path=/api/orders/**
               filters:
-                - RewritePath=/order/(?<segment>.*), /$\{segment}
                 - PrefixPath=/order-service
 
 # Eureka client configuration
