@@ -17,29 +17,29 @@ spring:
           routes:
             # Example route for user service
             - id: user-service
-              uri: lb://user-service
+              uri: lb://USER-SERVICE
               predicates:
-                - Path=/api/users/**
+                - Path=/users/**
               filters:
-                - StripPrefix=2  # Removes /api/users from the path before forwarding
+                - RewritePath=/user/(?<segment>.*), /$\{segment}
                 - PrefixPath=/user-service # Adds a prefix to the path for routing
 
             # Example route for product service
             - id: product-service
-              uri: lb://product-service
+              uri: lb://PRODUCT-SERVICE
               predicates:
-                - Path=/api/products/**
+                - Path=/products/**
               filters:
-                - StripPrefix=2  # Removes /api/products from the path before forwarding
+                - RewritePath=/product/(?<segment>.*), /$\{segment}
                 - PrefixPath=/product-service
 
             # Example route for order service
             - id: order-service
-              uri: lb://order-service
+              uri: lb://ORDER-SERVICE
               predicates:
-                - Path=/api/orders/**
+                - Path=/orders/**
               filters:
-                - StripPrefix=2  # Removes /api/orders from the path before forwarding
+                - RewritePath=/order/(?<segment>.*), /$\{segment}
                 - PrefixPath=/order-service
 
 # Eureka client configuration
@@ -47,9 +47,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8087/eureka-discovery/eureka/
-  instance:
-    prefer-ip-address: true
-    hostname: localhost
 
 # Logging configuration for debugging
 logging:
