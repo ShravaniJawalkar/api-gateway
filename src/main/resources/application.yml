@@ -4,61 +4,16 @@ server:
 spring:
   application:
     name: api-gateway
+  config:
+    import: configserver:http://localhost:8083/config-server/
   cloud:
-    discovery:
-      enabled: true
-    gateway:
-      server:
-        webflux:
-          discovery:
-            locator:
-              lower-case-service-id: true
-              enabled: true
-          routes:
-            # Example route for user service
-            - id: user-service
-              uri: lb://USER-SERVICE
-              predicates:
-                - Path=/api/users/**
-              filters:
-                - PrefixPath=/user-service # Adds a prefix to the path for routing
-
-            # Example route for product service
-            - id: product-service
-              uri: lb://PRODUCT-SERVICE
-              predicates:
-                - Path=/api/products/**
-              filters:
-                - PrefixPath=/product-service
-
-            # Example route for order service
-            - id: order-service
-              uri: lb://ORDER-SERVICE
-              predicates:
-                - Path=/api/orders/**
-              filters:
-                - PrefixPath=/order-service
-
-# Eureka client configuration
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8087/eureka-discovery/eureka/
-
-# Logging configuration for debugging
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.cloud.netflix.eureka: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-
-# Management endpoints for monitoring
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,gateway
-  endpoint:
-    health:
-      show-details: always
+    config:
+      profile: dev
+      name: api-gateway
+      label: master
+      fail-fast: true
+      retry:
+        initial-interval: 1000
+        max-attempts: 6
+        max-interval: 2000
+        multiplier: 1.1
